@@ -1,1 +1,3 @@
-echo "this is list.php";
+<?php
+    echo("list.php");
+?>
