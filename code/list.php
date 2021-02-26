@@ -1,0 +1,3 @@
+<?php
+    echo("list.php");
+?>
