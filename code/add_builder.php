@@ -11,8 +11,9 @@
 //Including connection file
 include 'conn.php';
 // define variables and set to empty values
-$nameErr = $emailErr = $mobilenoErr = $passwordErr = "";
-$name = $email = $mobileno = $password = $filename = $filetmpname = $server_loc = "";
+$nameErr = $emailErr = $mobilenoErr = $addressErr = $cityErr = $pincodeErr = $stateErr = "";
+$name = $email = $mobileno = $address = $city = $pincode = $state = "";
+
 $status = true;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -52,36 +53,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
   }
 
-  if (empty($_POST["password"])) {
-    $passwordErr = "Password is required";
+  if (empty($_POST["address"])) {
+    $addressErr = "Address is required";
     $status = false;
   } else {
-    $password = test_input($_POST["password"]);
+    $address = test_input($_POST["address"]);
+  }
+
+  if (empty($_POST["city"])) {
+    $cityErr = "City is required";
+    $status = false;
+  } else {
+    $city = test_input($_POST["city"]);
+  }
+
+  if (empty($_POST["pincode"])) {
+    $pincodeErr = "Pincode is required";
+    $status = false;
+  } else {
+    $pincode = test_input($_POST["pincode"]);
     
-    if (strlen($password)<8) {
-        $passwordErr = "Password should contain atleast 8 characters";
+    if (strlen($pincode)<6) {
+        $pincodeErr = "Pincode should be of 6 characters";
         $status = false;
      }
   }
 
-  if(isset($_POST['submit'])&&isset($_FILES['my_image'])){
-     $filename = $_FILES['my_image']['name'];
-     $filetmpname = $_FILES['my_image']['tmp_name'];
-     $folder = 'imagesuploaded/';
-     $server_loc = $folder.$filename;
-     echo $_FILES['my_image'];
-     echo "filename : $filename<br>";
-     echo "filetmpname : $filetmpname<br>";
-     echo "folder : $folder";
-     echo "server loc : $server_loc";
-     move_uploaded_file($filetmpname,$folder.$filename);
-     
-  }else{
-      echo "nothing obtained";
+  if (empty($_POST["state"])) {
+    $stateErr = "State is required";
+    $status = false;
+  } else {
+    $state = test_input($_POST["city"]);
   }
 
   if($status){
-    $query = "INSERT INTO brokers(name,mobileno,email,image,password) VALUES('$name','$mobileno','$email','$server_loc','$password')";
+    $query = "INSERT INTO builders(name,mobileno,email,address,city,pincode,state) VALUES('$name','$mobileno','$email','$address','$city','$pincode','$state')";
     $result = mysqli_query($conn,$query);
   }
   
@@ -103,7 +109,7 @@ function test_input($data) {
 
 <h2>Add operation</h2>
 <p><span class="error">* required field</span></p>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" enctype="multipart/form-data">  
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
   Name: <input type="text" name="name" value="<?php echo $name;?>">
   <span class="error">* <?php echo $nameErr;?></span>
   <br><br>
@@ -116,12 +122,22 @@ function test_input($data) {
   <span class="error">* <?php echo $emailErr;?></span>
   <br><br>
 
-  Password: <input type="password" name="password" value="<?php echo $password;?>">
-  <span class="error">* <?php echo $passwordErr;?></span>
+  Address: <input type="text" name="address" value="<?php echo $address;?>">
+  <span class="error">* <?php echo $addressErr;?></span>
   <br><br>
 
-  Select image to upload: <input type="file" name="my_image">
+  City: <input type="text" name="city" value="<?php echo $city;?>">
+  <span class="error">* <?php echo $cityErr;?></span>
+  <br><br>
 
+  Pincode: <input type="text" name="pincode" value="<?php echo $pincode;?>">
+  <span class="error">* <?php echo $pincodeErr;?></span>
+  <br><br>
+
+  State: <input type="text" name="state" value="<?php echo $state;?>">
+  <span class="error">* <?php echo $stateErr;?></span>
+  <br><br>
+  
   <button type="submit" name="submit">Submit</button>
     
 </form>
